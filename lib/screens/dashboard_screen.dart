@@ -9,6 +9,7 @@ import 'profile_screen.dart';
 import 'progress_analysis_screen.dart';
 import 'courses_list_screen.dart';
 import 'ai_analysis_screen.dart';
+import '../widgets/user_stats_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -79,7 +80,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildHomeScreen(String studentId, String studentName) {
     // Anasayfa = İlerleme ve Analiz
-    return const ProgressAnalysisScreen();
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Gamification Stats Widget at the top
+          UserStatsWidget(userId: studentId),
+          const SizedBox(height: 16),
+          // Original Progress Analysis
+          const ProgressAnalysisScreen(),
+        ],
+      ),
+    );
   }
 
   Widget _buildMenuCard(

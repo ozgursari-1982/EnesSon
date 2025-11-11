@@ -4,6 +4,7 @@ import '../models/course.dart';
 import '../models/test.dart';
 import '../services/firestore_service.dart';
 import '../services/gemini_ai_service.dart';
+import '../widgets/user_stats_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProgressAnalysisScreen extends StatefulWidget {
@@ -87,6 +88,8 @@ class _ProgressAnalysisScreenState extends State<ProgressAnalysisScreen> {
         : _courseAverages.values.reduce((a, b) => a + b) /
             _courseAverages.length;
 
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('📊 Analiz & İlerleme'),
@@ -99,6 +102,11 @@ class _ProgressAnalysisScreenState extends State<ProgressAnalysisScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // User Stats Widget (Gamification)
+              if (currentUser != null)
+                UserStatsWidget(userId: currentUser.uid),
+              const SizedBox(height: 20),
+
               // Genel Durum Kartı
               _buildOverviewCard(overallAverage, totalTests),
               const SizedBox(height: 20),

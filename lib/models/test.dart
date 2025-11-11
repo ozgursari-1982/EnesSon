@@ -80,6 +80,11 @@ class Question {
   final List<String> options;
   final int correctAnswerIndex;
   final String? explanation;
+  
+  // PHASE 1.3: Material reference tracking
+  final String? sourceMaterialId;    // ID of the material this question came from
+  final String? sourceMaterialTitle; // Title of the material for easy reference
+  final String? topic;               // Specific topic this question covers
 
   Question({
     required this.id,
@@ -87,6 +92,9 @@ class Question {
     required this.options,
     required this.correctAnswerIndex,
     this.explanation,
+    this.sourceMaterialId,
+    this.sourceMaterialTitle,
+    this.topic,
   });
 
   // Getter to provide the correct answer value
@@ -112,6 +120,9 @@ class Question {
       options: List<String>.from(map['options'] ?? []),
       correctAnswerIndex: map['correctAnswerIndex'] ?? 0,
       explanation: map['explanation'],
+      sourceMaterialId: map['sourceMaterialId'],
+      sourceMaterialTitle: map['sourceMaterialTitle'],
+      topic: map['topic'],
     );
   }
 
@@ -122,6 +133,9 @@ class Question {
       'options': options,
       'correctAnswerIndex': correctAnswerIndex,
       'explanation': explanation,
+      'sourceMaterialId': sourceMaterialId,
+      'sourceMaterialTitle': sourceMaterialTitle,
+      'topic': topic,
     };
   }
 }

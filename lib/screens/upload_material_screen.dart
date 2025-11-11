@@ -11,6 +11,8 @@ import '../services/firebase_storage_service.dart';
 import '../services/firestore_service.dart';
 import '../services/gemini_ai_service.dart';
 import '../services/teacher_style_analyzer.dart';
+import '../services/automatic_teacher_profile_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UploadMaterialScreen extends StatefulWidget {
   final Course course;
@@ -30,6 +32,7 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
   final _aiService = GeminiAIService();
   final _teacherAnalyzer = TeacherStyleAnalyzer();
   final _imagePicker = ImagePicker();
+  final _automaticProfileService = AutomaticTeacherProfileService(); // PHASE 2.2: Add automatic profile service
 
   dynamic _selectedFile; // File for mobile, PlatformFile for web
   String? _fileName;
@@ -252,6 +255,28 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
         await _firestoreService.updateMaterialAnalysis(materialId, analysisJson);
         
         print('✅ ÖĞRETMEN STİLİ ANALİZİ tamamlandı: ${analysisResult.questions.length} soru bulundu');
+        
+        // PHASE 2.2: Trigger automatic teacher profile update
+        try {
+          final currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser != null) {
+            print('🎓 Otomatik öğretmen profili güncelleniyor...');
+            await _automaticProfileService.onMaterialUploaded(
+              materialId: materialId,
+              courseId: widget.course.id,
+              studentId: currentUser.uid,
+              filePath: filePath ?? '',
+              courseName: widget.course.name,
+              teacherName: widget.course.teacherName ?? 'Öğretmen',
+              documentTitle: _titleController.text.trim(),
+            );
+            print('✅ Otomatik profil güncelleme başlatıldı');
+          }
+        } catch (e) {
+          print('⚠️ Otomatik profil güncelleme hatası (devam ediliyor): $e');
+          // Don't fail the whole process if profile update fails
+        }
+        
         return; // Success, exit loop
         
       } catch (e) {

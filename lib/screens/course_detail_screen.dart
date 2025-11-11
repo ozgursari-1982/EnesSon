@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import '../services/teacher_style_analyzer.dart';
 import '../models/teacher_style_profile.dart';
 import 'teacher_analysis_screen.dart';
+import '../widgets/teacher_profile_widget.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final Course course;
@@ -140,7 +141,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemCount: materials.length + 2, // +1 info kartı, +1 test oluştur butonu
+          itemCount: materials.length + 3, // +1 info kartı, +1 teacher profile widget, +1 test oluştur butonu
           separatorBuilder: (_, __) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             // İlk item: Info kartı
@@ -194,8 +195,16 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
               );
             }
             
+            // İkinci item: Teacher Profile Widget (PHASE 2.1 Integration)
+            if (index == 1) {
+              return TeacherProfileWidget(
+                courseId: widget.course.id,
+                courseName: widget.course.name,
+              );
+            }
+            
             // Son item: Test Oluştur butonu
-            if (index == materials.length + 1) {
+            if (index == materials.length + 2) {
               return Column(
                 children: [
                   const SizedBox(height: 16),
@@ -244,7 +253,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
             }
             
             // Diğer itemler: Materyal kartları
-            final material = materials[index - 1];
+            final material = materials[index - 2]; // -2 because of info card and teacher profile widget
             return _buildMaterialCard(material);
           },
         );
